@@ -86,7 +86,12 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppUpdateDatabaseState());
     });
   }
-
+  void deleteData(int id) {
+    database.rawDelete('DELETE FROM tasks WHERE id= ?',[id]).then((value) {
+      getDataFromDatabase(database);
+      emit(AppDeleteDatabaseState());
+    });
+  }
   void changeBottomSheetState(
       {@required bool isShown, @required IconData icon}) {
     isBottomSheetShown = isShown;

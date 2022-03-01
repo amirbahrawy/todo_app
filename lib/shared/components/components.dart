@@ -25,7 +25,22 @@ Widget defaultFormField({
       ),
     );
 
-Widget buildTaskItem(Map model, context) => Padding(
+Widget buildTaskItem(Map model, context) {
+  return Dismissible(
+    direction: DismissDirection.endToStart,
+    background: Container(
+        color: Colors.red,
+        child: Icon(
+          Icons.delete,
+          size: 40.0,
+          color: Colors.white,
+        ),
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 20),
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+    ),
+    key: Key(model['id'].toString()),
+    child: Padding(
       padding: const EdgeInsets.all(15.0),
       child: Row(
         children: [
@@ -79,4 +94,42 @@ Widget buildTaskItem(Map model, context) => Padding(
               }),
         ],
       ),
+    ),
+    onDismissed: (direction) {
+      AppCubit.get(context).deleteData(model['id']);
+    },
+  );
+}
+
+Widget taskBuilder(List<Map> tasks) {
+  if (tasks.isEmpty)
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.menu,
+            size: 100.0,
+            color: Colors.grey,
+          ),
+          Text(
+            'No Tasks Yet, Please Add Some Tasks',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+                fontSize: 16.0),
+          )
+        ],
+      ),
     );
+  else
+    return ListView.separated(
+        itemBuilder: (context, index) => buildTaskItem(tasks[index], context),
+        separatorBuilder: (context, index) => Container(
+              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              width: double.infinity,
+              height: 1.0,
+              color: Colors.grey,
+            ),
+        itemCount: tasks.length);
+}
